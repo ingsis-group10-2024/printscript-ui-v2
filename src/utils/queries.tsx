@@ -2,12 +2,12 @@ import {useMutation, UseMutationResult, useQuery} from 'react-query';
 import {CreateSnippet, PaginatedSnippets, Snippet, UpdateSnippet} from './snippet.ts';
 import {SnippetOperations} from "./snippetOperations.ts";
 import {PaginatedUsers} from "./users.ts";
-import {FakeSnippetOperations} from "./mock/fakeSnippetOperations.ts";
 import {TestCase} from "../types/TestCase.ts";
 import {FileType} from "../types/FileType.ts";
 import {Rule} from "../types/Rule.ts";
 import {useAuth0} from "@auth0/auth0-react";
 import {useEffect} from "react";
+import {RealSnippetOperations} from "./RealSnippetOperations.ts";
 
 
 export const useSnippetsOperations = () => {
@@ -21,7 +21,7 @@ export const useSnippetsOperations = () => {
           .catch(error => console.error(error));
   });
 
-  const snippetOperations: SnippetOperations = new FakeSnippetOperations(/* getAccessTokenSilently */); // TODO: Replace with your implementation
+  const snippetOperations: SnippetOperations = new RealSnippetOperations('https://printscript-group10.duckdns.org', getAccessTokenSilently);
 
   return snippetOperations
 }
