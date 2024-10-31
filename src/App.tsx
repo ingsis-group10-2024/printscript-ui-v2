@@ -1,29 +1,34 @@
 import './App.css';
-import {RouterProvider} from "react-router";
-import {createBrowserRouter} from "react-router-dom";
+import { RouterProvider } from "react-router";
+import { createBrowserRouter } from "react-router-dom";
 import HomeScreen from "./screens/Home.tsx";
-import {QueryClient, QueryClientProvider} from "react-query";
 import RulesScreen from "./screens/Rules.tsx";
-import {withAuthenticationRequired} from "@auth0/auth0-react";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { withAuthenticationRequired } from "@auth0/auth0-react";
+
+// Protect individual components with Auth0
+const ProtectedHomeScreen = withAuthenticationRequired(HomeScreen);
+const ProtectedRulesScreen = withAuthenticationRequired(RulesScreen);
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <HomeScreen/>
+        element: <ProtectedHomeScreen />  // Ensures the home route redirects to login if not authenticated
     },
     {
         path: '/rules',
-        element: <RulesScreen/>
+        element: <ProtectedRulesScreen />  // Protects the rules route as well
     }
 ]);
 
-export const queryClient = new QueryClient()
+export const queryClient = new QueryClient();
+
 const App = () => {
     return (
         <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router}/>
+            <RouterProvider router={router} />
         </QueryClientProvider>
     );
 }
 
-export default withAuthenticationRequired(App);
+export default App;
