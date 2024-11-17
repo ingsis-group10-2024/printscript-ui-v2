@@ -19,6 +19,7 @@ export class RealSnippetOperations implements SnippetOperations {
 
     private async getHeaders() {
         const token = await this.getAccessToken();
+        console.log(token)
         return {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -26,7 +27,7 @@ export class RealSnippetOperations implements SnippetOperations {
     }
 
     async createSnippet(createSnippet: CreateSnippet): Promise<Snippet> {
-        const response = await axios.post(`${this.baseUrl}/manager/snippets`, createSnippet, {
+        const response = await axios.post(`${this.baseUrl}/manager/snippet`, createSnippet, {
             headers: await this.getHeaders(),
         });
         return response.data;
