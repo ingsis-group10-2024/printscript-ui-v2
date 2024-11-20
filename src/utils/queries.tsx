@@ -46,6 +46,7 @@ export const useCreateSnippet = ({onSuccess}: {onSuccess: () => void}): UseMutat
   return useMutation<Snippet, Error, CreateSnippet>(createSnippet => snippetOperations.createSnippet(createSnippet), {onSuccess});
 };
 
+
 export const useUpdateSnippetById = ({onSuccess}: {onSuccess: () => void}): UseMutationResult<Snippet, Error, {
   id: string;
   updateSnippet: UpdateSnippet

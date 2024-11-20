@@ -44,12 +44,13 @@ export const SnippetTable = (props: SnippetTableProps) => {
   const handleLoadSnippet = async (target: EventTarget & HTMLInputElement) => {
     const files = target.files
     if (!files || !files.length) {
-      createSnackbar('error',"Please select at leat one file")
+      createSnackbar('error',"Please select at least one file")
       return
     }
     const file = files[0]
     const splitName = file.name.split(".")
-    const fileType = getFileLanguage(fileTypes ?? [], splitName.at(-1))
+    const fileExt = splitName.at(-1);
+    const fileType = getFileLanguage(fileTypes ?? [], fileExt ? `.${fileExt}` : undefined);
     if (!fileType) {
       createSnackbar('error', `File type ${splitName.at(-1)} not supported`)
       return
@@ -76,15 +77,15 @@ export const SnippetTable = (props: SnippetTableProps) => {
   return (
       <>
         <Box display="flex" flexDirection="row" justifyContent="space-between">
-          <Box sx={{background: 'white', width: '30%', display: 'flex'}}>
+          <Box sx={{ background: 'white', width: '30%', display: 'flex' }}>
             <InputBase
-                sx={{ml: 1, flex: 1}}
+                sx={{ ml: 1, flex: 1 }}
                 placeholder="Search FileType"
-                inputProps={{'aria-label': 'search'}}
+                inputProps={{ 'aria-label': 'search' }}
                 onChange={e => handleSearchSnippet(e.target.value)}
             />
-            <IconButton type="button" sx={{p: '10px'}} aria-label="search">
-              <Search/>
+            <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
+              <Search />
             </IconButton>
           </Box>
           <Button ref={popoverRef} variant="contained" disableRipple sx={{boxShadow: 0}}

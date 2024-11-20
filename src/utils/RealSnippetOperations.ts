@@ -50,7 +50,7 @@ export class RealSnippetOperations implements SnippetOperations {
     }
 
     async updateSnippetById(id: string, updateSnippet: UpdateSnippet): Promise<Snippet> {
-        const response = await axios.put(`${this.baseUrl}/manager/snippet/snippets/${id}`, updateSnippet, {
+        const response = await axios.put(`${this.baseUrl}/manager/snippet/update/${id}`, updateSnippet, {
             headers: await this.getHeaders(),
         });
         return response.data;
@@ -124,7 +124,7 @@ export class RealSnippetOperations implements SnippetOperations {
     }
 
     async deleteSnippet(id: string): Promise<string> {
-        await axios.delete(`${this.baseUrl}/permission/snippets/${id}`, {
+        await axios.delete(`${this.baseUrl}/manager/snippet/${id}`, {
             headers: await this.getHeaders(),
         });
         return id;
