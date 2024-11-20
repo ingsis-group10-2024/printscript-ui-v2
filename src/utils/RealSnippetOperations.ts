@@ -34,14 +34,15 @@ export class RealSnippetOperations implements SnippetOperations {
     }
 
     async getSnippetById(id: string): Promise<Snippet | undefined> {
-        const response = await axios.get(`${this.baseUrl}/permission/snippets/${id}`, {
+        const response = await axios.get(`${this.baseUrl}/manager/snippet/get`, {
+            params: { snippetId: id },
             headers: await this.getHeaders(),
         });
         return response.data;
     }
 
-    async listSnippetDescriptors(page: number = 0, pageSize: number = 10): Promise<PaginatedSnippets> {
-        const response = await axios.get(`${this.baseUrl}/permission/snippets`, {
+    async listSnippetDescriptors(page: number = 0, pageSize: number = 1): Promise<PaginatedSnippets> {
+        const response = await axios.get(`${this.baseUrl}/manager/snippet/snippets`, {
             params: { page, pageSize },
             headers: await this.getHeaders(),
         });
@@ -49,14 +50,14 @@ export class RealSnippetOperations implements SnippetOperations {
     }
 
     async updateSnippetById(id: string, updateSnippet: UpdateSnippet): Promise<Snippet> {
-        const response = await axios.put(`${this.baseUrl}/permission/snippets/${id}`, updateSnippet, {
+        const response = await axios.put(`${this.baseUrl}/manager/snippet/snippets/${id}`, updateSnippet, {
             headers: await this.getHeaders(),
         });
         return response.data;
     }
 
     async getUserFriends(name: string = "", page: number = 0, pageSize: number = 10): Promise<PaginatedUsers> {
-        const response = await axios.get(`${this.baseUrl}/permission/users`, {
+        const response = await axios.get(`${this.baseUrl}/manager/users`, {
             params: { name, page, pageSize },
             headers: await this.getHeaders(),
         });
@@ -64,9 +65,12 @@ export class RealSnippetOperations implements SnippetOperations {
     }
 
     async shareSnippet(snippetId: string, userId: string): Promise<Snippet> {
-        const response = await axios.post(`${this.baseUrl}/permission/snippets/${snippetId}/share`, { userId }, {
-            headers: await this.getHeaders(),
-        });
+        const response = await axios.post(`${this.baseUrl}/permission/snippets/share/${snippetId}`, {
+                targetUserId: userId
+            },
+            {
+                headers: await this.getHeaders(),
+            });
         return response.data;
     }
 
@@ -85,7 +89,7 @@ export class RealSnippetOperations implements SnippetOperations {
     }
 
     async formatSnippet(snippetContent: string): Promise<string> {
-        const response = await axios.post(`${this.baseUrl}/permission/format`, { content: snippetContent }, {
+        const response = await axios.post(`${this.baseUrl}/runner/format`, { content: snippetContent }, {
             headers: await this.getHeaders(),
         });
         return response.data;
@@ -123,7 +127,7 @@ export class RealSnippetOperations implements SnippetOperations {
         await axios.delete(`${this.baseUrl}/permission/snippets/${id}`, {
             headers: await this.getHeaders(),
         });
-        return id; // Devolvemos el ID como confirmación de eliminación.
+        return id;
     }
 
     async getFileTypes(): Promise<FileType[]> {
