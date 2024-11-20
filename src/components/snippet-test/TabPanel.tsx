@@ -92,8 +92,7 @@ export const TabPanel = ({value, index, test: initialTest, setTestCase, removeTe
                                 disableElevation>
                             Test
                         </Button>
-                        {data && (data === "success" ? <Chip label="Pass" color="success"/> :
-                            <Chip label="Fail" color="error"/>)}
+                        {data && (data.message === "Test passed" ? <Chip label="Pass" color="success"/> : <Chip label="Test failed" color="error"/>)}
                     </Box>
                 </Box>
             )}

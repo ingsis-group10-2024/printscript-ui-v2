@@ -75,14 +75,14 @@ export class RealSnippetOperations implements SnippetOperations {
     }
 
     async getFormatRules(): Promise<Rule[]> {
-        const response = await axios.get(`${this.baseUrl}/permission/rules/format`, {
+        const response = await axios.get(`${this.baseUrl}/runner/rules/format`, {
             headers: await this.getHeaders(),
         });
         return response.data;
     }
 
     async getLintingRules(): Promise<Rule[]> {
-        const response = await axios.get(`${this.baseUrl}/permission/rules/lint`, {
+        const response = await axios.get(`${this.baseUrl}/runner/rules/lint`, {
             headers: await this.getHeaders(),
         });
         return response.data;
@@ -117,7 +117,7 @@ export class RealSnippetOperations implements SnippetOperations {
     }
 
     async testSnippet(testCase: Partial<TestCase>): Promise<TestCaseResult> {
-        const response = await axios.post(`${this.baseUrl}/permission/test`, testCase, {
+        const response = await axios.post(`${this.baseUrl}/permission/testcases/test`, testCase, {
             headers: await this.getHeaders(),
         });
         return response.data;
