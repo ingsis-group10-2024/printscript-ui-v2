@@ -43,13 +43,8 @@ describe('Add snippet tests', () => {
       });
     }).as('postRequest');
 
-    const filePath = 'cypress/fixtures/example.ps';
-    const fileName = filePath.split('/').pop();
-    const splitName = fileName.split(".");
-    const fileExt = splitName.at(-1);
-
     /* ==== Generated with Cypress Studio ==== */
-    cy.get('[data-testid="upload-file-input"').selectFile("cypress/fixtures/example_ps.ps", {force: true})
+    cy.get('[data-testid="upload-file-input"]').selectFile("cypress/fixtures/example_ps.ps", {force: true})
 
     cy.get('[data-testid="SaveIcon"]', { timeout: 10000 }).should('be.visible').click();
 

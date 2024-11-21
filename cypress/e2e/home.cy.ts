@@ -32,16 +32,16 @@ describe('Home', () => {
     first10Snippets.should('have.length.lessThan', 10)
   })
 
-  it('Can creat snippet find snippets by name', () => {
+  it('Can create snippet find snippets by name', () => {
     cy.visit(FRONTEND_URL)
     const snippetData: CreateSnippet = {
       name: "Test name",
-      content: "print(1)",
-      language: "printscript",
+      content: "println('Hello world!');",
+      language: "PrintScript",
       extension: ".ps"
     }
 
-    cy.intercept('GET', BACKEND_URL+"/snippets*", (req) => {
+    cy.intercept('GET', BACKEND_URL+"/manager/snippets*", (req) => {
       req.reply((res) => {
         expect(res.statusCode).to.eq(200);
       });
@@ -49,7 +49,7 @@ describe('Home', () => {
 
     cy.request({
       method: 'POST',
-      url: '/snippets', // Adjust if you have a different base URL configured in Cypress
+      url: '/manager/snippet', // Adjust if you have a different base URL configured in Cypress
       body: snippetData,
       failOnStatusCode: false // Optional: set to true if you want the test to fail on non-2xx status codes
     }).then((response) => {
