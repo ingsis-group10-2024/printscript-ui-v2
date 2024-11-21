@@ -17,6 +17,7 @@ export const useSnippetsOperations = () => {
       getAccessTokenSilently()
           .then(token => {
               console.log(token)
+              localStorage.setItem('authAccessToken', token)
           })
           .catch(error => console.error(error));
   });
@@ -119,8 +120,6 @@ export const useTestSnippet = () => {
   )
 }
 
-
-
 export const useGetFormatRules = () => {
   const snippetOperations = useSnippetsOperations()
 
@@ -171,7 +170,6 @@ export const useDeleteSnippet = ({onSuccess}: {onSuccess: () => void}) => {
       }
   );
 }
-
 
 export const useGetFileTypes = () => {
   const snippetOperations = useSnippetsOperations()

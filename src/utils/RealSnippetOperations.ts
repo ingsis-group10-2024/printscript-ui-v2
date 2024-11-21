@@ -138,14 +138,14 @@ export class RealSnippetOperations implements SnippetOperations {
     }
 
     async modifyFormatRule(newRules: Rule[]): Promise<Rule[]> {
-        const response = await axios.put(`${this.baseUrl}/permission/rules/format`, newRules, {
+        const response = await axios.put(`${this.baseUrl}/runner/rules/format`, newRules, {
             headers: await this.getHeaders(),
         });
         return response.data;
     }
 
     async modifyLintingRule(newRules: Rule[]): Promise<Rule[]> {
-        const response = await axios.put(`${this.baseUrl}/permission/rules/lint`, newRules, {
+        const response = await axios.put(`${this.baseUrl}/runner/rules/lint`, newRules, {
             headers: await this.getHeaders(),
         });
         return response.data;
