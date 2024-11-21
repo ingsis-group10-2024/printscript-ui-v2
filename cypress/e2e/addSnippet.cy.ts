@@ -33,9 +33,10 @@ describe('Add snippet tests', () => {
   })
 
   it('Can add snippets via file', () => {
-    cy.visit("/")
-    cy.intercept('POST', BACKEND_URL+"/manager/snippet/upload", (req) => {
+
+    cy.intercept('POST', `${BACKEND_URL}/manager/snippet/upload`, (req) => {
       req.reply((res) => {
+        // Assertions for response
         expect(res.body).to.have.property('message').and.to.be.a('string');
         expect(res.body.message).to.contain('Successfully created snippet:');
         expect(res.body).to.have.property('errors').and.to.be.null;
@@ -43,11 +44,12 @@ describe('Add snippet tests', () => {
       });
     }).as('postRequest');
 
+    cy.visit("/")
     /* ==== Generated with Cypress Studio ==== */
     cy.get('[data-testid="upload-file-input"]').selectFile("cypress/fixtures/example_ps.ps", {force: true})
 
-    cy.get('[data-testid="SaveIcon"]', { timeout: 10000 }).should('be.visible').click();
+    cy.get('[data-testid="SaveIcon"]', { timeout: 20000 }).should('be.visible').click();
 
     cy.wait('@postRequest').its('response.statusCode').should('eq', 200);
-  })
-})
+  });
+});

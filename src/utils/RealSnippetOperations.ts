@@ -55,6 +55,12 @@ export class RealSnippetOperations implements SnippetOperations {
         });
         return response.data;
     }
+    async executeSnippet(snippetContent: string): Promise<string[]>{
+        const response = await axios.post(`${this.baseUrl}/runner/execute`, { content: snippetContent }, {
+            headers: await this.getHeaders(),
+        });
+        return response.data
+    }
 
     async getUserFriends(name: string = "", page: number = 0, pageSize: number = 10): Promise<PaginatedUsers> {
         const response = await axios.get(`${this.baseUrl}/manager/users`, {

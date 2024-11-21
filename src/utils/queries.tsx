@@ -176,3 +176,10 @@ export const useGetFileTypes = () => {
 
   return useQuery<FileType[], Error>('fileTypes', () => snippetOperations.getFileTypes());
 }
+export const useExecuteSnippet = () => {
+    const snippetOperations = useSnippetsOperations()
+
+    return useMutation<string, Error, string>(
+        snippetContent => snippetOperations.executeSnippet(snippetContent)
+    );
+}

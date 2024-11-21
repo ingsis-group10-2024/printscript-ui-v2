@@ -3,21 +3,28 @@ import {highlight, languages} from "prismjs";
 import Editor from "react-simple-code-editor";
 import {Bòx} from "../components/snippet-table/SnippetBox.tsx";
 import {useState} from "react";
+import {useExecuteSnippet} from "../utils/queries.tsx";
 
 export const SnippetExecution = () => {
   // Here you should provide all the logic to connect to your sockets.
   const [input, setInput] = useState<string>("")
   const [output, setOutput] = useState<string[]>([]);
+  const {mutateAsync: executeSnippet} = useExecuteSnippet()
 
   //TODO: get the output from the server
   const code = output.join("\n")
 
-  const handleEnter = (event: { key: string }) => {
-    if (event.key === 'Enter') {
-      //TODO: logic to send inputs to server
-      setOutput([...output, input])
-      setInput("")
-    }
+  const handleEnter = () => {
+      if (input.trim()) {
+          executeSnippet(input, {
+              onSuccess: (result) => {
+                  setOutput((prev) => [...prev, ...result]);
+              },
+              onError: (error) => {
+                  setOutput((prev) => [...prev, `Error: ${error.message}`]);
+              },
+          });
+      }
   };
 
     return (
