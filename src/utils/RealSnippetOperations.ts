@@ -5,7 +5,7 @@ import {PaginatedUsers} from "./users.ts";
 import {Rule} from "../types/Rule.ts";
 import {TestCase} from "../types/TestCase.ts";
 import {FileType} from "../types/FileType.ts";
-import {TestCaseResult} from "./queries.tsx";
+import {ExecutionResponse, TestCaseResult} from "./queries.tsx";
 
 
 export class RealSnippetOperations implements SnippetOperations {
@@ -30,6 +30,17 @@ export class RealSnippetOperations implements SnippetOperations {
         const response = await axios.post(`${this.baseUrl}/manager/snippet`, createSnippet, {
             headers: await this.getHeaders(),
         });
+        return response.data;
+    }
+
+    async executeSnippet(content: string, languageVersion: string = "1.1"): Promise<ExecutionResponse> {
+        const response = await axios.post(`${this.baseUrl}/runner/execute`, {
+            content: content,
+            languageVersion: languageVersion
+        }, {
+            headers: await this.getHeaders(),
+        });
+
         return response.data;
     }
 

@@ -7,6 +7,7 @@ import "prismjs/themes/prism-okaidia.css";
 import {Alert, Box, CircularProgress, IconButton, Tooltip, Typography} from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import {
+  useExecuteSnippet,
   useUpdateSnippetById
 } from "../utils/queries.tsx";
 import {useFormatSnippet, useGetSnippetById, useShareSnippet} from "../utils/queries.tsx";
@@ -57,11 +58,14 @@ export const SnippetDetail = (props: SnippetDetailProps) => {
   const [deleteConfirmationModalOpen, setDeleteConfirmationModalOpen] = useState(false)
   const [testModalOpened, setTestModalOpened] = useState(false);
   const [runSnippet, setRunSnippet] = useState(false);
+  const [output, setOutput] = useState<string[]>([]);
+  const [errors, setErrors] = useState<string[]>([]);
 
   const {data: snippet, isLoading} = useGetSnippetById(id);
   const {mutate: shareSnippet, isLoading: loadingShare} = useShareSnippet()
   const {mutate: formatSnippet, isLoading: isFormatLoading, data: formatSnippetData} = useFormatSnippet()
   const {mutate: updateSnippet, isLoading: isUpdateSnippetLoading} = useUpdateSnippetById({onSuccess: () => queryClient.invalidateQueries(['snippet', id])})
+  const { mutate: executeSnippet, isLoading: isExecutingSnippet } = useExecuteSnippet();
 
   useEffect(() => {
     if (snippet) {
@@ -79,6 +83,20 @@ export const SnippetDetail = (props: SnippetDetailProps) => {
   async function handleShareSnippet(userId: string) {
     shareSnippet({snippetId: id, userId})
   }
+
+  const handleExecuteCode = (content: string) => {
+    executeSnippet({ content, languageVersion: "1.1" }, {
+      onSuccess: (executionResponse) => {
+        console.log("Execution successful:", executionResponse);
+        setOutput(executionResponse.output);
+        setErrors(executionResponse.errors);
+      },
+      onError: (error: Error) => {
+        console.error("Execution error:", error);
+        setErrors([error.message || "An error occurred during execution."]);
+      }
+    });
+  };
 
   return (
       <Box p={4} minWidth={'60vw'}>
@@ -103,12 +121,17 @@ export const SnippetDetail = (props: SnippetDetailProps) => {
                 </IconButton>
               </Tooltip>
               <DownloadButton snippet={snippet}/>
-              <Tooltip title={runSnippet ? "Stop run" : "Run"}>
-                <IconButton onClick={() => setRunSnippet(!runSnippet)}>
+              <Tooltip title={runSnippet ? "Stop execution" : "Run"}>
+                <IconButton
+                    onClick={() => {
+                      handleExecuteCode(code);
+                      setRunSnippet((prev) => !prev);
+                    }}
+                    disabled={isExecutingSnippet}
+                >
                   {runSnippet ? <StopRounded/> : <PlayArrow/>}
                 </IconButton>
               </Tooltip>
-              {/* TODO: we can implement a live mode*/}
               <Tooltip title={"Format"}>
                 <IconButton onClick={() => formatSnippet(code)} disabled={isFormatLoading}>
                   <ReadMoreIcon />
@@ -130,7 +153,7 @@ export const SnippetDetail = (props: SnippetDetailProps) => {
                 <Editor
                     value={code}
                     padding={10}
-                    onValueChange={(code) => setCode(code)}
+                    onValueChange={(newCode) => setCode(newCode)}
                     highlight={(code) => highlight(code, languages.js, "javascript")}
                     maxLength={1000}
                     style={{
@@ -143,7 +166,9 @@ export const SnippetDetail = (props: SnippetDetailProps) => {
             </Box>
             <Box pt={1} flex={1} marginTop={2}>
               <Alert severity="info">Output</Alert>
-              <SnippetExecution />
+              {output.length > 0 && <pre>{output.join("\n")}</pre>}
+              {errors.length > 0 && <Alert severity="error">{errors.join("\n")}</Alert>}
+              <SnippetExecution code={code} onExecute={handleExecuteCode} />
             </Box>
           </>
         }

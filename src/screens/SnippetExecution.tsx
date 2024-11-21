@@ -3,39 +3,64 @@ import {highlight, languages} from "prismjs";
 import Editor from "react-simple-code-editor";
 import {Bòx} from "../components/snippet-table/SnippetBox.tsx";
 import {useState} from "react";
+import {ExecutionResponse, useExecuteSnippet} from "../utils/queries.tsx";
 
-export const SnippetExecution = () => {
-  // Here you should provide all the logic to connect to your sockets.
-  const [input, setInput] = useState<string>("")
-  const [output, setOutput] = useState<string[]>([]);
+interface SnippetExecutionProps {
+    code: string;
+    onExecute: (content: string) => void;
+}
 
-  //TODO: get the output from the server
-  const code = output.join("\n")
+export const SnippetExecution = ({ code }: SnippetExecutionProps) => {
+    const [input, setInput] = useState<string>(code);
+    const [output, setOutput] = useState<string[]>([]);
+    const [errors, setErrors] = useState<string[]>([]);
+    const { mutate: executeSnippet, isLoading } = useExecuteSnippet(); // Usamos el hook
 
-  const handleEnter = (event: { key: string }) => {
-    if (event.key === 'Enter') {
-      //TODO: logic to send inputs to server
-      setOutput([...output, input])
-      setInput("")
-    }
-  };
+    const handleEnter = (event: { key: string }) => {
+        if (event.key === 'Enter') {
+            // Ejecutar el snippet en el backend
+            executeSnippet({ content: input, languageVersion: "1.1" }, {
+                onSuccess: (executionResponse: ExecutionResponse) => {
+                    // Actualiza el estado con la respuesta de la ejecución
+                    setOutput(executionResponse.output);
+                    setErrors(executionResponse.errors);
+                },
+                onError: (error: Error) => {
+                    // Maneja los errores de la ejecución
+                    setErrors([error.message || "An error occurred during execution."]);
+                }
+            });
+
+            setInput(""); // Limpiar el input después de ejecutar
+        }
+    };
 
     return (
-      <>
-        <Bòx flex={1} overflow={"none"} minHeight={200} bgcolor={'black'} color={'white'} code={code}>
-            <Editor
-              value={code}
-              padding={10}
-              onValueChange={(code) => setInput(code)}
-              highlight={(code) => highlight(code, languages.js, 'javascript')}
-              maxLength={1000}
-              style={{
-                  fontFamily: "monospace",
-                  fontSize: 17,
-              }}
+        <>
+            <Bòx flex={1} overflow={"none"} minHeight={200} bgcolor={'black'} color={'white'} code={output.join("\n")}>
+                <Editor
+                    value={output.join("\n")}
+                    padding={10}
+                    onValueChange={(input) => setInput(input)}
+                    highlight={(input) => highlight(input, languages.js, 'javascript')}
+                    maxLength={1000}
+                    style={{ fontFamily: "monospace", fontSize: 17 }}
+                />
+            </Bòx>
+            <OutlinedInput
+                onKeyDown={handleEnter}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type here"
+                fullWidth
             />
-        </Bòx>
-        <OutlinedInput onKeyDown={handleEnter} value={input} onChange={e => setInput(e.target.value)} placeholder="Type here" fullWidth/>
-      </>
-    )
-}
+            {isLoading && <p>Executing...</p>}  {/* Muestra un mensaje mientras se está ejecutando */}
+            {errors.length > 0 && (
+                <div style={{ color: 'red' }}>
+                    <h4>Errors:</h4>
+                    <pre>{errors.join("\n")}</pre>
+                </div>
+            )}
+        </>
+    );
+};
