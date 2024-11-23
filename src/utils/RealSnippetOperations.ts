@@ -103,7 +103,13 @@ export class RealSnippetOperations implements SnippetOperations {
         const response = await axios.post(`${this.baseUrl}/runner/format`, { content: snippetContent }, {
             headers: await this.getHeaders(),
         });
-        return response.data;
+        console.log("Respuesta de la API:", response.data);
+        // Check if the response has the expected format
+        if (response.data && typeof response.data.formattedContent === 'string') {
+            return response.data.formattedContent; // Return the formatted content
+        } else {
+            throw new Error('Response error: ' + JSON.stringify(response.data));
+        }
     }
 
     async getTestCases(): Promise<TestCase[]> {

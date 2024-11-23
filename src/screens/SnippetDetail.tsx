@@ -28,26 +28,31 @@ type SnippetDetailProps = {
 
 const DownloadButton = ({snippet}: { snippet?: Snippet }) => {
   if (!snippet) return null;
+
+  const extension = snippet.extension || "ps";  // Use ps as default extension
   const file = new Blob([snippet.content], {type: 'text/plain'});
 
   return (
-    <Tooltip title={"Download"}>
-      <IconButton sx={{
-        cursor: "pointer"
-      }}>
-        <a download={`${snippet.name}.${snippet.extension}`} target="_blank"
-           rel="noreferrer" href={URL.createObjectURL(file)} style={{
-          textDecoration: "none",
-          color: "inherit",
-          display: 'flex',
-          alignItems: 'center',
-        }}>
-          <Download/>
-        </a>
-      </IconButton>
-    </Tooltip>
-  )
-}
+      <Tooltip title={"Download"}>
+        <IconButton sx={{ cursor: "pointer" }}>
+          <a
+              download={`${snippet.name}.${extension}`} // Asegúrate de usar la extensión correcta
+              target="_blank"
+              rel="noreferrer"
+              href={URL.createObjectURL(file)}
+              style={{
+                textDecoration: "none",
+                color: "inherit",
+                display: 'flex',
+                alignItems: 'center',
+              }}
+          >
+            <Download />
+          </a>
+        </IconButton>
+      </Tooltip>
+  );
+};
 
 export const SnippetDetail = (props: SnippetDetailProps) => {
   const {id, handleCloseModal} = props;
@@ -77,7 +82,7 @@ export const SnippetDetail = (props: SnippetDetailProps) => {
     if (formatSnippetData) {
       setCode(formatSnippetData)
     }
-  }, [formatSnippetData])
+  }, [formatSnippetData]);
 
 
   async function handleShareSnippet(userId: string) {

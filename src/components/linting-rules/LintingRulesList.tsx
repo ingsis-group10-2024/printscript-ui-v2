@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
+  Box,
   Button,
   Card,
   Checkbox,
@@ -51,46 +52,72 @@ const LintingRulesList = () => {
     setRules(newRules)
   }
 
-  return (
-    <Card style={{padding: 16, margin: 16}}>
-      <Typography variant={"h6"}>Linting rules</Typography>
-      <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-        {
-          isLoading || isLoadingMutate ?  <Typography style={{height: 80}}>Loading...</Typography> :
-          rules?.map((rule) => {
-          return (
-            <ListItem
-              key={rule.name}
-              disablePadding
-              style={{height: 40}}
-            >
-              <Checkbox
-                edge="start"
-                checked={rule.isActive}
-                disableRipple
-                onChange={toggleRule(rule)}
-              />
-              <ListItemText primary={rule.name} />
-              {typeof rule.value === 'number' ?
-                (<TextField
-                  type="number"
-                  variant={"standard"}
-                  value={rule.value}
-                  onChange={handleNumberChange(rule)}
-                />) : typeof rule.value === 'string' ?
-                  (<TextField
-                    variant={"standard"}
-                    value={rule.value}
-                    onChange={e => handleValueChange(rule, e.target.value)}
-                  />) : null
-              }
-            </ListItem>
-          )
-        })}
-      </List>
-      <Button disabled={isLoading} variant={"contained"} onClick={() => mutateAsync(rules ?? [])}>Save</Button>
-    </Card>
+  const addNewRule = () => {
+    const newRule: Rule = {
+      id: `${Date.now()}`,  // Usamos el timestamp como id único
+      name: 'New Rule',
+      isActive: false,
+      value: ''
+    };
+    setRules([...rules ?? [], newRule]);
+  };
 
+  return (
+      <Card style={{ padding: 16, margin: 16 }}>
+        <Typography variant={"h6"}>Linting rules</Typography>
+        <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+          {
+            isLoading || isLoadingMutate ? <Typography style={{ height: 80 }}>Loading...</Typography> :
+                rules?.map((rule) => {
+                  return (
+                      <ListItem
+                          key={rule.name}
+                          disablePadding
+                          style={{ height: 40 }}
+                      >
+                        <Checkbox
+                            edge="start"
+                            checked={rule.isActive}
+                            disableRipple
+                            onChange={toggleRule(rule)}
+                        />
+                        <ListItemText primary={rule.name} />
+                        {typeof rule.value === 'number' ?
+                            (<TextField
+                                type="number"
+                                variant={"standard"}
+                                value={rule.value}
+                                onChange={handleNumberChange(rule)}
+                            />) : typeof rule.value === 'string' ?
+                                (<TextField
+                                    variant={"standard"}
+                                    value={rule.value}
+                                    onChange={e => handleValueChange(rule, e.target.value)}
+                                />) : null
+                        }
+                      </ListItem>
+                  );
+                })
+          }
+        </List>
+        <Box display="flex" flexDirection="column" gap={2} alignItems="flex-start">
+          <Button
+              disabled={isLoading}
+              variant={"contained"}
+              onClick={() => mutateAsync(rules ?? [])}
+              sx={{ width: 'auto' }} // Establecer el ancho automático
+          >
+            Save
+          </Button>
+          <Button
+              variant={"contained"}
+              onClick={addNewRule}
+              sx={{ width: 'auto' }} // Establecer el ancho automático
+          >
+            Add New Rule
+          </Button>
+        </Box>
+      </Card>
   );
 };
 
