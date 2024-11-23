@@ -166,8 +166,24 @@ export const SnippetDetail = (props: SnippetDetailProps) => {
             </Box>
             <Box pt={1} flex={1} marginTop={2}>
               <Alert severity="info">Output</Alert>
-              {output.length > 0 && <pre>{output.join("\n")}</pre>}
-              {errors.length > 0 && <Alert severity="error">{errors.join("\n")}</Alert>}
+              {/* Pantalla negra para la salida */}
+              <Bòx
+                  flex={1}
+                  minHeight={"200px"}
+                  bgcolor={'black'}
+                  color={'white'}
+                  padding={2}
+                  overflow={'auto'}
+                  code={output.join("\n")}  // Aquí pasamos la propiedad "code"
+              >
+                {output.length > 0 ? (
+                    <pre>{output.join("\n")}</pre>
+                ) : (
+                    <pre>Type here...</pre>  // Mensaje de "Type here" si no hay salida
+                )}
+                {errors.length > 0 && <Alert severity="error">{errors.join("\n")}</Alert>}
+              </Bòx>
+
               <SnippetExecution code={code} onExecute={handleExecuteCode} />
             </Box>
           </>
@@ -180,4 +196,3 @@ export const SnippetDetail = (props: SnippetDetailProps) => {
       </Box>
   );
 }
-

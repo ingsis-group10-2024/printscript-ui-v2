@@ -17,9 +17,10 @@ export const SnippetExecution = ({ code }: SnippetExecutionProps) => {
     const { mutate: executeSnippet, isLoading } = useExecuteSnippet(); // Usamos el hook
 
     const handleEnter = (event: { key: string }) => {
+        const fullCode = code + "\n" + input;
         if (event.key === 'Enter') {
             // Ejecutar el snippet en el backend
-            executeSnippet({ content: input, languageVersion: "1.1" }, {
+            executeSnippet({ content: fullCode, languageVersion: "1.1" }, {
                 onSuccess: (executionResponse: ExecutionResponse) => {
                     // Actualiza el estado con la respuesta de la ejecución
                     setOutput(executionResponse.output);
@@ -37,26 +38,30 @@ export const SnippetExecution = ({ code }: SnippetExecutionProps) => {
 
     return (
         <>
-            <Bòx flex={1} overflow={"none"} minHeight={200} bgcolor={'black'} color={'white'} code={output.join("\n")}>
+            {/* Caja de salida (output) arriba del input */}
+            <Bòx flex={1} overflow={"none"} minHeight={200} bgcolor={"black"} color={"white"} code={output.join("\n")}>
+                {/* Mostramos la salida del código ejecutado en el editor */}
                 <Editor
                     value={output.join("\n")}
                     padding={10}
-                    onValueChange={(input) => setInput(input)}
-                    highlight={(input) => highlight(input, languages.js, 'javascript')}
+                    onValueChange={(input) => setInput(input)} // Actualiza el input cuando cambia el valor
+                    highlight={(input) => highlight(input, languages.js, "javascript")}
                     maxLength={1000}
                     style={{ fontFamily: "monospace", fontSize: 17 }}
                 />
             </Bòx>
+            {/* Caja de entrada debajo, reemplazando 'Type here...' al ejecutarse */}
             <OutlinedInput
                 onKeyDown={handleEnter}
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type here"
+                onChange={(e) => setInput(e.target.value)} // Actualiza el estado de 'input' con el código del usuario
+                placeholder={output.length > 0 ? "" : "Type here..."} // Reemplazamos el texto cuando haya salida
                 fullWidth
+                sx={{ marginTop: 2 }} // Añadimos un margen superior para que no se pegue a la caja de salida
             />
-            {isLoading && <p>Executing...</p>}  {/* Muestra un mensaje mientras se está ejecutando */}
+            {isLoading && <p>Executing...</p>} {/* Mensaje mientras se está ejecutando */}
             {errors.length > 0 && (
-                <div style={{ color: 'red' }}>
+                <div style={{ color: "red" }}>
                     <h4>Errors:</h4>
                     <pre>{errors.join("\n")}</pre>
                 </div>
