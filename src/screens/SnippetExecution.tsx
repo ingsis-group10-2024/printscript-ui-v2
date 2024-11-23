@@ -1,19 +1,18 @@
-import {OutlinedInput} from "@mui/material";
-import {highlight, languages} from "prismjs";
-import Editor from "react-simple-code-editor";
-import {Bòx} from "../components/snippet-table/SnippetBox.tsx";
-import {useState} from "react";
-import {ExecutionResponse, useExecuteSnippet} from "../utils/queries.tsx";
+import { OutlinedInput } from "@mui/material";
+import React, { useState } from "react";
+import { ExecutionResponse, useExecuteSnippet } from "../utils/queries.tsx";
 
 interface SnippetExecutionProps {
     code: string;
     onExecute: (content: string) => void;
+    output: string[]; // Recibe output
+    setOutput: React.Dispatch<React.SetStateAction<string[]>>; // Función para actualizar output
+    errors: string[]; // Recibe errors
+    setErrors: React.Dispatch<React.SetStateAction<string[]>>; // Función para actualizar errors
 }
 
-export const SnippetExecution = ({ code }: SnippetExecutionProps) => {
+export const SnippetExecution = ({ code, output, setOutput, errors, setErrors }: SnippetExecutionProps) => {
     const [input, setInput] = useState<string>(code);
-    const [output, setOutput] = useState<string[]>([]);
-    const [errors, setErrors] = useState<string[]>([]);
     const { mutate: executeSnippet, isLoading } = useExecuteSnippet(); // Usamos el hook
 
     const handleEnter = (event: { key: string }) => {
@@ -38,18 +37,18 @@ export const SnippetExecution = ({ code }: SnippetExecutionProps) => {
 
     return (
         <>
-            {/* Caja de salida (output) arriba del input */}
-            <Bòx flex={1} overflow={"none"} minHeight={200} bgcolor={"black"} color={"white"} code={output.join("\n")}>
-                {/* Mostramos la salida del código ejecutado en el editor */}
-                <Editor
-                    value={output.join("\n")}
-                    padding={10}
-                    onValueChange={(input) => setInput(input)} // Actualiza el input cuando cambia el valor
-                    highlight={(input) => highlight(input, languages.js, "javascript")}
-                    maxLength={1000}
-                    style={{ fontFamily: "monospace", fontSize: 17 }}
-                />
-            </Bòx>
+            {/*/!* Caja de salida (output) arriba del input *!/*/}
+            {/*<Bòx flex={1} overflow={"none"} minHeight={200} bgcolor={"black"} color={"white"} code={output.join("\n")}>*/}
+            {/*    /!* Mostramos la salida del código ejecutado en el editor *!/*/}
+            {/*    <Editor*/}
+            {/*        value={output.join("\n")}*/}
+            {/*        padding={10}*/}
+            {/*        onValueChange={(input) => setInput(input)} // Actualiza el input cuando cambia el valor*/}
+            {/*        highlight={(input) => highlight(input, languages.js, "javascript")}*/}
+            {/*        maxLength={1000}*/}
+            {/*        style={{ fontFamily: "monospace", fontSize: 17 }}*/}
+            {/*    />*/}
+            {/*</Bòx>*/}
             {/* Caja de entrada debajo, reemplazando 'Type here...' al ejecutarse */}
             <OutlinedInput
                 onKeyDown={handleEnter}

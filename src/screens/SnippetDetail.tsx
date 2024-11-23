@@ -65,7 +65,7 @@ export const SnippetDetail = (props: SnippetDetailProps) => {
   const {mutate: shareSnippet, isLoading: loadingShare} = useShareSnippet()
   const {mutate: formatSnippet, isLoading: isFormatLoading, data: formatSnippetData} = useFormatSnippet()
   const {mutate: updateSnippet, isLoading: isUpdateSnippetLoading} = useUpdateSnippetById({onSuccess: () => queryClient.invalidateQueries(['snippet', id])})
-  const { mutate: executeSnippet, isLoading: isExecutingSnippet } = useExecuteSnippet();
+  const {mutate: executeSnippet, isLoading: isExecutingSnippet } = useExecuteSnippet();
 
   useEffect(() => {
     if (snippet) {
@@ -101,26 +101,26 @@ export const SnippetDetail = (props: SnippetDetailProps) => {
   return (
       <Box p={4} minWidth={'60vw'}>
         <Box width={'100%'} p={2} display={'flex'} justifyContent={'flex-end'}>
-          <CloseIcon style={{cursor: "pointer"}} onClick={handleCloseModal}/>
+          <CloseIcon style={{ cursor: "pointer" }} onClick={handleCloseModal} />
         </Box>
         {
           isLoading ? (<>
             <Typography fontWeight={"bold"} mb={2} variant="h4">Loading...</Typography>
-            <CircularProgress/>
+            <CircularProgress />
           </>) : <>
             <Typography variant="h4" fontWeight={"bold"}>{snippet?.name ?? "Snippet"}</Typography>
             <Box display="flex" flexDirection="row" gap="8px" padding="8px">
               <Tooltip title={"Share"}>
                 <IconButton onClick={() => setShareModalOppened(true)}>
-                  <Share/>
+                  <Share />
                 </IconButton>
               </Tooltip>
               <Tooltip title={"Test"}>
                 <IconButton onClick={() => setTestModalOpened(true)}>
-                  <BugReport/>
+                  <BugReport />
                 </IconButton>
               </Tooltip>
-              <DownloadButton snippet={snippet}/>
+              <DownloadButton snippet={snippet} />
               <Tooltip title={runSnippet ? "Stop execution" : "Run"}>
                 <IconButton
                     onClick={() => {
@@ -129,7 +129,7 @@ export const SnippetDetail = (props: SnippetDetailProps) => {
                     }}
                     disabled={isExecutingSnippet}
                 >
-                  {runSnippet ? <StopRounded/> : <PlayArrow/>}
+                  {runSnippet ? <StopRounded /> : <PlayArrow />}
                 </IconButton>
               </Tooltip>
               <Tooltip title={"Format"}>
@@ -138,12 +138,12 @@ export const SnippetDetail = (props: SnippetDetailProps) => {
                 </IconButton>
               </Tooltip>
               <Tooltip title={"Save changes"}>
-                <IconButton color={"primary"} onClick={() => updateSnippet({id: id, updateSnippet: {content: code}})} disabled={isUpdateSnippetLoading || snippet?.content === code} >
+                <IconButton color={"primary"} onClick={() => updateSnippet({ id: id, updateSnippet: { content: code } })} disabled={isUpdateSnippetLoading || snippet?.content === code}>
                   <Save />
                 </IconButton>
               </Tooltip>
               <Tooltip title={"Delete"}>
-                <IconButton onClick={() => setDeleteConfirmationModalOpen(true)} >
+                <IconButton onClick={() => setDeleteConfirmationModalOpen(true)}>
                   <Delete color={"error"} />
                 </IconButton>
               </Tooltip>
@@ -166,33 +166,30 @@ export const SnippetDetail = (props: SnippetDetailProps) => {
             </Box>
             <Box pt={1} flex={1} marginTop={2}>
               <Alert severity="info">Output</Alert>
-              {/* Pantalla negra para la salida */}
-              <Bòx
-                  flex={1}
-                  minHeight={"200px"}
-                  bgcolor={'black'}
-                  color={'white'}
-                  padding={2}
-                  overflow={'auto'}
-                  code={output.join("\n")}  // Aquí pasamos la propiedad "code"
-              >
+              <Bòx flex={1} minHeight={"200px"} bgcolor={'black'} color={'white'} padding={2} overflow={'auto'} code={output.join("\n")}>
                 {output.length > 0 ? (
                     <pre>{output.join("\n")}</pre>
                 ) : (
-                    <pre>Type here...</pre>  // Mensaje de "Type here" si no hay salida
+                    <pre>Output here...</pre>
                 )}
                 {errors.length > 0 && <Alert severity="error">{errors.join("\n")}</Alert>}
               </Bòx>
-
-              <SnippetExecution code={code} onExecute={handleExecuteCode} />
+              <SnippetExecution
+                  code={code}
+                  output={output}
+                  setOutput={setOutput}
+                  errors={errors}
+                  setErrors={setErrors}
+                  onExecute={handleExecuteCode}
+              />
             </Box>
           </>
         }
         <ShareSnippetModal loading={loadingShare || isLoading} open={shareModalOppened}
                            onClose={() => setShareModalOppened(false)}
-                           onShare={handleShareSnippet}/>
-        <TestSnippetModal open={testModalOpened} onClose={() => setTestModalOpened(false)}/>
+                           onShare={handleShareSnippet} />
+        <TestSnippetModal open={testModalOpened} onClose={() => setTestModalOpened(false)} />
         <DeleteConfirmationModal open={deleteConfirmationModalOpen} onClose={() => setDeleteConfirmationModalOpen(false)} id={snippet?.id ?? ""} setCloseDetails={handleCloseModal} />
       </Box>
   );
-}
+};
