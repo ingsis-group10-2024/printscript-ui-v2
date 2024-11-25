@@ -122,15 +122,16 @@ export class RealSnippetOperations implements SnippetOperations {
     async postTestCase(testCase: TestCase): Promise<TestCase> {
         const response = await axios.post(`${this.baseUrl}/permission/testcases`, testCase, {
             headers: await this.getHeaders(),
+            responseType: 'text',
         });
         return response.data;
     }
 
     async removeTestCase(id: string): Promise<string> {
-        await axios.delete(`${this.baseUrl}/permission/testcases/${id}`, {
+        const response = await axios.delete(`${this.baseUrl}/permission/testcases/${id}`, {
             headers: await this.getHeaders(),
         });
-        return id; // Devolvemos el ID como confirmación de eliminación.
+        return response.data; // Devolvemos el ID como confirmación de eliminación.
     }
 
     async testSnippet(testCase: Partial<TestCase>): Promise<TestCaseResult> {
