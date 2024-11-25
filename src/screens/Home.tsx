@@ -55,7 +55,7 @@ const HomeScreen = () => {
 
   return (
       <>
-          <h1>Snippets</h1>
+          <h1>HOla </h1>
         <SnippetTable loading={isLoading} handleClickSnippet={setSnippetId} snippets={data?.snippets}
                       handleSearchSnippet={handleSearchSnippet}/>
         <Drawer open={!!snippetId} anchor={"right"} onClose={handleCloseModal}>
