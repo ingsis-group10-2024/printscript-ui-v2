@@ -14,7 +14,7 @@ const HomeScreen = () => {
   const [snippetName, setSnippetName] = useState('');
   const [snippetId, setSnippetId] = useState<string | null>(null)
   const {page, page_size, count, handleChangeCount} = usePaginationContext()
-  const {data, isLoading} = useGetSnippets(page, page_size, snippetName)
+  const {data, isLoading, refetch } = useGetSnippets(page, page_size, snippetName)
 
   useEffect(() => {
     if (data?.count && data.count != count) {
@@ -29,7 +29,17 @@ const HomeScreen = () => {
     }
   }, [paramsId]);
 
-  const handleCloseModal = () => setSnippetId(null)
+    // Configure interval to refetch data every 10 seconds
+    useEffect(() => {
+        const interval = setInterval(() => {
+            refetch();
+        }, 10000); // Update every 10 seconds
+
+        return () => clearInterval(interval); // Clear interval on unmount
+    }, [refetch]);
+
+
+    const handleCloseModal = () => setSnippetId(null)
 
   // DeBounce Function
   useDebounce(() => {
@@ -45,6 +55,7 @@ const HomeScreen = () => {
 
   return (
       <>
+          <h1>HOla </h1>
         <SnippetTable loading={isLoading} handleClickSnippet={setSnippetId} snippets={data?.snippets}
                       handleSearchSnippet={handleSearchSnippet}/>
         <Drawer open={!!snippetId} anchor={"right"} onClose={handleCloseModal}>

@@ -11,7 +11,6 @@ const RulesScreen = () => {
             </Typography>
           <LintingRulesList />
           <FormattingRulesList/>
-
         </Box>
     )
 }
