@@ -86,14 +86,14 @@ export class RealSnippetOperations implements SnippetOperations {
     }
 
     async getFormatRules(): Promise<Rule[]> {
-        const response = await axios.get(`${this.baseUrl}/runner/rules/format`, {
+        const response = await axios.get(`${this.baseUrl}/manager/rules/format`, {
             headers: await this.getHeaders(),
         });
         return response.data;
     }
 
     async getLintingRules(): Promise<Rule[]> {
-        const response = await axios.get(`${this.baseUrl}/runner/rules/lint`, {
+        const response = await axios.get(`${this.baseUrl}/manager/rules/lint`, {
             headers: await this.getHeaders(),
         });
         return response.data;
@@ -103,7 +103,7 @@ export class RealSnippetOperations implements SnippetOperations {
         const response = await axios.post(`${this.baseUrl}/runner/format`, { content: snippetContent }, {
             headers: await this.getHeaders(),
         });
-        console.log("Respuesta de la API:", response.data);
+        console.log("API answer: ", response.data);
         // Check if the response has the expected format
         if (response.data && typeof response.data.formattedContent === 'string') {
             return response.data.formattedContent; // Return the formatted content
@@ -113,28 +113,28 @@ export class RealSnippetOperations implements SnippetOperations {
     }
 
     async getTestCases(): Promise<TestCase[]> {
-        const response = await axios.get(`${this.baseUrl}/permission/testcases`, {
+        const response = await axios.get(`${this.baseUrl}/manager/testcases`, {
             headers: await this.getHeaders(),
         });
         return response.data;
     }
 
     async postTestCase(testCase: TestCase): Promise<TestCase> {
-        const response = await axios.post(`${this.baseUrl}/permission/testcases`, testCase, {
+        const response = await axios.post(`${this.baseUrl}/manager/testcases`, testCase, {
             headers: await this.getHeaders(),
         });
         return response.data;
     }
 
     async removeTestCase(id: string): Promise<string> {
-        await axios.delete(`${this.baseUrl}/permission/testcases/${id}`, {
+        await axios.delete(`${this.baseUrl}/manager/testcases/${id}`, {
             headers: await this.getHeaders(),
         });
-        return id; // Devolvemos el ID como confirmación de eliminación.
+        return id;
     }
 
     async testSnippet(testCase: Partial<TestCase>): Promise<TestCaseResult> {
-        const response = await axios.post(`${this.baseUrl}/permission/testcases/test`, testCase, {
+        const response = await axios.post(`${this.baseUrl}/manager/testcases/test`, testCase, {
             headers: await this.getHeaders(),
         });
         return response.data;
@@ -155,14 +155,14 @@ export class RealSnippetOperations implements SnippetOperations {
     }
 
     async modifyFormatRule(newRules: Rule[]): Promise<Rule[]> {
-        const response = await axios.put(`${this.baseUrl}/runner/rules/format`, newRules, {
+        const response = await axios.put(`${this.baseUrl}/manager/rules/format`, newRules, {
             headers: await this.getHeaders(),
         });
         return response.data;
     }
 
     async modifyLintingRule(newRules: Rule[]): Promise<Rule[]> {
-        const response = await axios.put(`${this.baseUrl}/runner/rules/lint`, newRules, {
+        const response = await axios.put(`${this.baseUrl}/manager/rules/lint`, newRules, {
             headers: await this.getHeaders(),
         });
         return response.data;
