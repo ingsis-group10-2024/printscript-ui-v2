@@ -62,6 +62,6 @@ jobs:
             sudo su
             docker container stop printscript-ui
             docker container rm printscript-ui 
-            docker-compose -f docker-compose.yml pull printscript-ui  
-            docker-compose -f docker-compose.yml up -d printscript-ui
+            docker-compose -f docker-compose.prod.yml pull printscript-ui  
+            docker-compose -f docker-compose.prod.yml up -d printscript-ui
             docker image prune -f
