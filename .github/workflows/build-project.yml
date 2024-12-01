@@ -1,0 +1,27 @@
+name: Build UI
+
+on:
+  push:
+    branches:
+      - group-10-dev
+
+jobs:
+  build:
+    name: Build UI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the UI
+        run: npm run build
