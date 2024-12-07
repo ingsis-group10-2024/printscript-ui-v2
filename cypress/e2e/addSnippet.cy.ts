@@ -44,7 +44,7 @@ describe('Add snippet tests', () => {
     }).as('postRequest');
 
     /* ==== Generated with Cypress Studio ==== */
-    cy.get('[data-testid="upload-file-input"]').selectFile("cypress/fixtures/example_ps.ps", {force: true})
+    cy.get('[data-testid="upload-file-input"]').selectFile("cypress/fixtures/trololo.ps", {force: true})
 
     cy.get('[data-testid="SaveIcon"]', { timeout: 10000 }).should('be.visible').click();
 

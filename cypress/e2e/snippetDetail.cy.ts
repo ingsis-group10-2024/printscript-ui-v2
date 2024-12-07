@@ -11,13 +11,13 @@ describe('Add snippet tests', () => {
     cy.intercept('GET', BACKEND_URL+"/snippets/*", {
       statusCode: 201,
       body: fakeStore.getSnippetById("1"),
-    }).as("getSnippetById")
+    }).as("getSnippet")
     cy.intercept('GET', BACKEND_URL+"/snippets").as("getSnippets")
 
     cy.visit("/")
 
-    // cy.wait("@getSnippets")
-    cy.wait(2000) // TODO comment this line and uncomment 19 to wait for the real data
+    cy.wait("/get")
+    // cy.wait(2000) // TODO comment this line and uncomment 19 to wait for the real data
     cy.get('.MuiTableBody-root > :nth-child(1) > :nth-child(1)').click();
   })
 
