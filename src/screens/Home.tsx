@@ -9,61 +9,67 @@ import {usePaginationContext} from "../contexts/paginationContext.tsx";
 import useDebounce from "../hooks/useDebounce.ts";
 
 const HomeScreen = () => {
-  const {id: paramsId} = useParams<{ id: string }>();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [snippetName, setSnippetName] = useState('');
-  const [snippetId, setSnippetId] = useState<string | null>(null)
-  const {page, page_size, count, handleChangeCount} = usePaginationContext()
-  const {data, isLoading, refetch } = useGetSnippets(page, page_size, snippetName)
+    const {id: paramsId} = useParams<{ id: string }>();
+    const [searchTerm, setSearchTerm] = useState('');
+    const [snippetId, setSnippetId] = useState<string | null>(null);
+    const {page, page_size, count, handleChangeCount} = usePaginationContext();
+    const {data, isLoading, refetch} = useGetSnippets(page, page_size, '');
 
-  useEffect(() => {
-    if (data?.count && data.count != count) {
-      handleChangeCount(data.count)
-    }
-  }, [count, data?.count, handleChangeCount]);
+    const [filteredSnippets, setFilteredSnippets] = useState(data?.snippets || []);
 
+    useEffect(() => {
+        if (data?.count && data.count !== count) {
+            handleChangeCount(data.count);
+        }
+        setFilteredSnippets(data?.snippets || []); // Start with all snippets
+    }, [count, data?.count, data?.snippets, handleChangeCount]);
 
-  useEffect(() => {
-    if (paramsId) {
-      setSnippetId(paramsId);
-    }
-  }, [paramsId]);
+    useEffect(() => {
+        if (paramsId) {
+            setSnippetId(paramsId);
+        }
+    }, [paramsId]);
 
-    // Configure interval to refetch data every 10 seconds
+    // Refetch data every 10 seconds
     useEffect(() => {
         const interval = setInterval(() => {
             refetch();
-        }, 10000); // Update every 10 seconds
+        }, 10000);
 
-        return () => clearInterval(interval); // Clear interval on unmount
+        return () => clearInterval(interval);
     }, [refetch]);
 
+    // Debounce for search
+    useDebounce(() => {
+        if (searchTerm) {
+            const filtered = (data?.snippets || []).filter(snippet =>
+                snippet.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            setFilteredSnippets(filtered);
+        } else {
+            setFilteredSnippets(data?.snippets || []);
+        }
+    }, [searchTerm], 800);
 
-    const handleCloseModal = () => setSnippetId(null)
+    const handleSearchSnippet = (snippetName: string) => {
+        setSearchTerm(snippetName);
+    };
 
-  // DeBounce Function
-  useDebounce(() => {
-        setSnippetName(
-            searchTerm
-        );
-      }, [searchTerm], 800
-  );
+    const handleCloseModal = () => setSnippetId(null);
 
-  const handleSearchSnippet = (snippetName: string) => {
-    setSearchTerm(snippetName);
-  };
-
-  return (
-      <>
-          <h1>HOla </h1>
-        <SnippetTable loading={isLoading} handleClickSnippet={setSnippetId} snippets={data?.snippets}
-                      handleSearchSnippet={handleSearchSnippet}/>
-        <Drawer open={!!snippetId} anchor={"right"} onClose={handleCloseModal}>
-          {snippetId && <SnippetDetail handleCloseModal={handleCloseModal} id={snippetId}/>}
-        </Drawer>
-      </>
-  )
-}
+    return (
+        <>
+            <SnippetTable
+                loading={isLoading}
+                handleClickSnippet={setSnippetId}
+                snippets={filteredSnippets} // Show only filtered snippets
+                handleSearchSnippet={handleSearchSnippet}
+            />
+            <Drawer open={!!snippetId} anchor={"right"} onClose={handleCloseModal}>
+                {snippetId && <SnippetDetail handleCloseModal={handleCloseModal} id={snippetId} />}
+            </Drawer>
+        </>
+    );
+};
 
 export default withNavbar(HomeScreen);
-
