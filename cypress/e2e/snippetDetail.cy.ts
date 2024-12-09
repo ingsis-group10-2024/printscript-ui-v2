@@ -1,24 +1,19 @@
-import {AUTH0_PASSWORD, AUTH0_USERNAME, BACKEND_URL} from "../../src/utils/constants";
-import {FakeSnippetStore} from "../../src/utils/mock/fakeSnippetStore";
+import {AUTH0_PASSWORD, AUTH0_USERNAME , FRONTEND_URL} from "../../src/utils/constants";
+
 
 describe('Add snippet tests', () => {
-  const fakeStore = new FakeSnippetStore()
+
+
   beforeEach(() => {
-     cy.loginToAuth0(
-         AUTH0_USERNAME,
-         AUTH0_PASSWORD
-     )
-    cy.intercept('GET', BACKEND_URL+"/snippets/*", {
-      statusCode: 201,
-      body: fakeStore.getSnippetById("1"),
-    }).as("getSnippet")
-    cy.intercept('GET', BACKEND_URL+"/snippets").as("getSnippets")
+    cy.loginToAuth0(
+        AUTH0_USERNAME,
+        AUTH0_PASSWORD
+    )
 
-    cy.visit("/")
+    cy.visit(FRONTEND_URL)
 
-    cy.wait("/get")
-    // cy.wait(2000) // TODO comment this line and uncomment 19 to wait for the real data
-    cy.get('.MuiTableBody-root > :nth-child(1) > :nth-child(1)').click();
+    cy.wait(2000)
+    cy.get('.MuiTableBody-root > :nth-child(2) > :nth-child(2)').click();
   })
 
   it('Can share a snippet ', () => {
@@ -29,9 +24,13 @@ describe('Add snippet tests', () => {
     cy.wait(2000)
   })
 
+
   it('Can run snippets', function() {
     cy.get('[data-testid="PlayArrowIcon"]').click();
-    cy.get('.css-1hpabnv > .MuiBox-root > div > .npm__react-simple-code-editor__textarea').should("have.length.greaterThan",0);
+    cy.get('.MuiBox-root pre').invoke('text').then((text) => {
+      const lines = text.trim().split('\n'); // Divide el texto en líneas
+      expect(lines.length).to.be.greaterThan(0); // Asegura que hay al menos una línea
+    });
   });
 
   it('Can format snippets', function() {

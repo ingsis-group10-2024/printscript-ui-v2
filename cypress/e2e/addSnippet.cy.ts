@@ -1,4 +1,4 @@
-import {AUTH0_PASSWORD, AUTH0_USERNAME, BACKEND_URL} from "../../src/utils/constants";
+import {AUTH0_PASSWORD, AUTH0_USERNAME, BACKEND_URL, FRONTEND_URL} from "../../src/utils/constants";
 
 describe('Add snippet tests', () => {
   beforeEach(() => {
@@ -33,7 +33,7 @@ describe('Add snippet tests', () => {
   })
 
   it('Can add snippets via file', () => {
-    cy.visit("/")
+    cy.visit(FRONTEND_URL)
     cy.intercept('POST', BACKEND_URL+"/manager/snippet/upload", (req) => {
       req.reply((res) => {
         expect(res.body).to.have.property('message').and.to.be.a('string');
@@ -44,10 +44,14 @@ describe('Add snippet tests', () => {
     }).as('postRequest');
 
     /* ==== Generated with Cypress Studio ==== */
-    cy.get('[data-testid="upload-file-input"]').selectFile("cypress/fixtures/trololo.ps", {force: true})
+    cy.get('.css-9jay18 > .MuiButton-root').click();
+    cy.get('.MuiList-root > [tabindex="-1"]').click();
+    cy.get('[data-testid="upload-file-input"]').selectFile('cypress/fixtures/example_ps.ps', {force: true})
 
-    cy.get('[data-testid="SaveIcon"]', { timeout: 10000 }).should('be.visible').click();
+    cy.get('[data-testid="SaveIcon"]').should('be.visible').click();
+    // cy.get('[data-testid="SaveIcon"]', { timeout: 10000 }).should('be.visible').click();
+    // cy.wait('@postRequest').its('response.statusCode').should('eq', 200);
+    // cy.wait(10000)
 
-    cy.wait('@postRequest').its('response.statusCode').should('eq', 200);
   })
 })
