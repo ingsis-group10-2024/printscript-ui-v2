@@ -5,10 +5,10 @@ import {
   Checkbox,
   List,
   ListItem,
-  ListItemText,
   TextField,
   Typography,
-  Box
+  Box,
+  Grid
 } from "@mui/material";
 import { useGetFormatRules, useModifyFormatRules } from "../../utils/queries.tsx";
 import { queryClient } from "../../App.tsx";
@@ -28,8 +28,20 @@ const FormattingRulesList = () => {
 
   const handleValueChange = (rule: Rule, newValue: string | number) => {
     const newRules = rules?.map(r => {
-      if (r.name === rule.name) {
+      if (r.id === rule.id) {
         return { ...r, value: newValue };
+      } else {
+        return r;
+      }
+    });
+    setRules(newRules);
+  };
+
+  const handleNameChange = (rule: Rule) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = event.target.value;
+    const newRules = rules?.map(r => {
+      if (r.id === rule.id) {
+        return { ...r, name: newName };
       } else {
         return r;
       }
@@ -44,7 +56,7 @@ const FormattingRulesList = () => {
 
   const toggleRule = (rule: Rule) => () => {
     const newRules = rules?.map(r => {
-      if (r.name === rule.name) {
+      if (r.id === rule.id) {
         return {...r, isActive: !r.isActive};
       } else {
         return r;
@@ -72,30 +84,58 @@ const FormattingRulesList = () => {
                 rules?.map((rule) => {
                   return (
                       <ListItem
-                          key={rule.name}
+                          key={rule.id}
                           disablePadding
                           style={{ height: 40 }}
                       >
-                        <Checkbox
-                            edge="start"
-                            checked={rule.isActive}
-                            disableRipple
-                            onChange={toggleRule(rule)}
-                        />
-                        <ListItemText primary={rule.name} />
-                        {typeof rule.value === 'number' ?
-                            (<TextField
-                                type="number"
+                        <Grid container spacing={2} alignItems="center">
+                          <Grid item>
+                            <Checkbox
+                                edge="start"
+                                checked={rule.isActive}
+                                disableRipple
+                                onChange={toggleRule(rule)}
+                            />
+                          </Grid>
+                          <Grid item xs={5}>
+                            <TextField
                                 variant={"standard"}
-                                value={rule.value}
-                                onChange={handleNumberChange(rule)}
-                            />) : typeof rule.value === 'string' ?
+                                value={rule.name}
+                                onChange={handleNameChange(rule)}
+                                InputProps={{
+                                  classes: {
+                                    underline: 'custom-underline'
+                                  }
+                                }}
+                                sx={{ display: 'block', marginLeft: 'auto' }}
+                            />
+                          </Grid>
+                          <Grid item xs={5} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            {typeof rule.value === 'number' ?
                                 (<TextField
+                                    type="number"
                                     variant={"standard"}
                                     value={rule.value}
-                                    onChange={e => handleValueChange(rule, e.target.value)}
-                                />) : null
-                        }
+                                    onChange={handleNumberChange(rule)}
+                                    InputProps={{
+                                      classes: {
+                                        underline: 'custom-underline'
+                                      }
+                                    }}
+                                />) : typeof rule.value === 'string' ?
+                                    (<TextField
+                                        variant={"standard"}
+                                        value={rule.value}
+                                        onChange={e => handleValueChange(rule, e.target.value)}
+                                        InputProps={{
+                                          classes: {
+                                            underline: 'custom-underline'
+                                          }
+                                        }}
+                                    />) : null
+                            }
+                          </Grid>
+                        </Grid>
                       </ListItem>
                   );
                 })
